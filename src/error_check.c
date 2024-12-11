@@ -6,11 +6,17 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 12:24:10 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/09 15:08:55 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/11 22:21:10 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
+
+void	print_usage(void)
+{
+	write(2, "Usage: ./pipex infile cmd1 cmd2 outfile\n", 41);
+	exit(EXIT_FAILURE);
+}
 
 void	print_error(char *message, char *arg, int *exit_code)
 {
@@ -43,6 +49,9 @@ void	check_error(t_pipex *pipex, char **av)
 	int	exit_code;
 
 	exit_code = 0;
+	printf("%s", pipex->path_env);
+	if (!pipex->path_env)
+		print_error("path not found", "", &exit_code);
 	check_files(av, &exit_code);
 	if (pipex->cmd1[0] == NULL || pipex->cmd2[0] == NULL)
 		print_error("command not found: ", "empty", &exit_code);

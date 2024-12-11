@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:56:53 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/09 12:53:54 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/11 22:11:55 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,16 @@ static int	word_lenght(const char *s, char c)
 	return (i);
 }
 
+static int	word_lenght_quote(const char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i] && s[i] != '\'')
+		i++;
+	return (i);
+}
+
 static void	*free_tab(char **tab, int len_tab)
 {
 	int	i;
@@ -184,6 +194,17 @@ char	**ft_split(char const *s, char c)
 	split_tab[i] = NULL;
 	return (split_tab);
 }
+
+// int	main(void)
+// {
+// 	char **result = ft_split("salut je suis 'Matias et je suis' test", ' ');
+// 	int	i = 0;
+// 	while (result[i] != NULL)
+// 	{
+// 		printf("%s\n", result[i]);
+// 		i++;
+// 	}
+// }
 
 // int	main(void)
 // {
