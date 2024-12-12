@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 22:39:04 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/11 22:23:00 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/12 17:51:46 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,11 @@ int	main(int ac, char **av, char **env)
 		print_usage();
 	else
 	{
+		if (ft_get_env(env) == NULL)
+		{
+			write(STDERR_FILENO, "path is empty\n", 15);
+			exit(1);
+		}
 		pipex = malloc(sizeof(t_pipex));
 		if (pipex == NULL)
 			return (0);

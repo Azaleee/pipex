@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 00:13:47 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/11 22:24:09 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/12 17:00:35 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ char	*ft_get_env(char **env)
 {
 	int		i;
 	int		j;
+	char	*result;
 
 	i = 0;
 	j = 0;
@@ -42,7 +43,10 @@ char	*ft_get_env(char **env)
 		}
 		i++;
 	}
-	return (ft_substr(env[i], 5, j));
+	if (j == 0)
+		return (NULL);
+	result = ft_substr(env[i], 5, j);
+	return (result);
 }
 
 char	*get_path_command(char *cmd, char *path)

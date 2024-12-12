@@ -6,11 +6,22 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 18:00:54 by mosmont           #+#    #+#             */
-/*   Updated: 2024/10/17 20:13:32 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/12 17:16:45 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+
+int	strlen_quote(const char *s)
+{
+	int	i;
+
+	i = 0;
+	i++;
+	while (s[i] && s[i] != '\'')
+		i++;
+	return (i - 1);
+}
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
@@ -18,6 +29,11 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	size_t	s_len;
 
 	s_len = ft_strlen(s);
+	if (*s == '\'')
+	{
+		start++;
+		len = strlen_quote(s);
+	}
 	if (!s)
 		return (NULL);
 	if (start >= s_len)

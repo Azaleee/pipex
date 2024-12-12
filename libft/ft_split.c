@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:56:53 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/11 22:11:55 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/12 14:38:15 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,40 +115,49 @@ static int	count_words(char const *str, char c)
 {
 	int		in_word;
 	int		result;
+	int		in_quote;
 
 	result = 0;
 	in_word = 0;
+	in_quote = 0;
 	while (*str)
 	{
-		if ((*str != c) && in_word == 0)
+		if ((*str != c) && in_word == 0 && in_quote == 0)
 		{
+			if (*str == '\'')
+				in_quote = 1;
 			in_word = 1;
 			result++;
 		}
 		else if (*str == c)
 			in_word = 0;
+		else if (*str == '\'')
+			in_quote = 0;
 		str++;
 	}
 	return (result);
 }
+
+// Salut je suis 'l_et je suis'
 
 static int	word_lenght(const char *s, char c)
 {
 	int	i;
 
 	i = 0;
-	while (s[i] && s[i] != c)
+	if (s[i] == '\'')
+	{
 		i++;
-	return (i);
-}
-
-static int	word_lenght_quote(const char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i] && s[i] != '\'')
-		i++;
+		while (s[i] && s[i] != '\'')
+			i++;
+		if (s[i] == '\'')
+			i++;
+	}
+	else
+	{
+		while (s[i] && s[i] != c && s[i] != '\'')
+			i++;
+	}
 	return (i);
 }
 
@@ -172,7 +181,6 @@ char	**ft_split(char const *s, char c)
 {
 	char		**split_tab;
 	int			i;
-	char		*new_str;
 	int			nb_words;
 
 	nb_words = count_words(s, c);
@@ -184,10 +192,9 @@ char	**ft_split(char const *s, char c)
 	{
 		while (*s == c)
 			s++;
-		new_str = ft_substr(s, 0, word_lenght(s, c));
-		if (new_str == NULL)
+		split_tab[i] = ft_substr(s, 0, word_lenght(s, c));
+		if (split_tab[i] == NULL)
 			return (free_tab(split_tab, i));
-		split_tab[i] = new_str;
 		s += word_lenght(s, c);
 		i++;
 	}
@@ -197,13 +204,21 @@ char	**ft_split(char const *s, char c)
 
 // int	main(void)
 // {
-// 	char **result = ft_split("salut je suis 'Matias et je suis' test", ' ');
+// 	char **result = ft_split("awk '{salut $2}'", ' ');
 // 	int	i = 0;
 // 	while (result[i] != NULL)
 // 	{
 // 		printf("%s\n", result[i]);
 // 		i++;
 // 	}
+// 	i = 0;
+// 	while (result[i] != NULL)
+// 	{
+// 		free(result[i]);
+// 		i++;
+// 	}
+// 	free(result);
+// 	//printf("%d", word_lenght("'salut' je suis 'matias et je' salut 'la tu est la'", ' '));
 // }
 
 // int	main(void)

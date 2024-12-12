@@ -1,7 +1,7 @@
 NAME = pipex
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CC = /bin/cc
+CFLAGS = -Wall -Wextra -Werror -g
 
 INCLUDES = includes/
 LIBFT_DIR = libft
@@ -25,15 +25,15 @@ $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	mkdir -p $(OBJ_DIR)
+	/bin/mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -I$(INCLUDES) -I $(LIBFT_DIR) -o $@ -c $<
 
 clean:
-	rm -rf $(OBJ_DIR)
+	/bin/rm -rf $(OBJ_DIR)
 	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
-	rm -f $(NAME)
+	/bin/rm -f $(NAME)
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all

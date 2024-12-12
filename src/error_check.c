@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 12:24:10 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/11 22:21:10 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/12 11:02:06 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,6 @@ void	check_error(t_pipex *pipex, char **av)
 	int	exit_code;
 
 	exit_code = 0;
-	printf("%s", pipex->path_env);
-	if (!pipex->path_env)
-		print_error("path not found", "", &exit_code);
 	check_files(av, &exit_code);
 	if (pipex->cmd1[0] == NULL || pipex->cmd2[0] == NULL)
 		print_error("command not found: ", "empty", &exit_code);
