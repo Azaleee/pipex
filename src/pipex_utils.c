@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 00:13:47 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/12 17:00:35 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/20 15:57:35 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ char	*ft_get_env(char **env)
 {
 	int		i;
 	int		j;
-	char	*result;
 
 	i = 0;
 	j = 0;
@@ -45,8 +44,7 @@ char	*ft_get_env(char **env)
 	}
 	if (j == 0)
 		return (NULL);
-	result = ft_substr(env[i], 5, j);
-	return (result);
+	return (env[i] + 5 + 1);
 }
 
 char	*get_path_command(char *cmd, char *path)
@@ -57,6 +55,8 @@ char	*get_path_command(char *cmd, char *path)
 	char	*exec;
 
 	i = 0;
+	if (path == NULL)
+		return (NULL);
 	split_path = ft_split(path, ':');
 	while (split_path[i])
 	{
@@ -79,6 +79,7 @@ char	*get_path_command(char *cmd, char *path)
 void	parsing_args(t_pipex *pipex, char **av, char **env)
 {
 	pipex->fd_in = open_file(av[1], 0);
+	printf("%d", pipex->fd_in);
 	pipex->fd_out = open_file(av[4], 1);
 	pipex->cmd1 = ft_split(av[2], ' ');
 	pipex->cmd2 = ft_split(av[3], ' ');
@@ -88,6 +89,13 @@ void	parsing_args(t_pipex *pipex, char **av, char **env)
 		exit(1);
 	}
 	pipex->path_env = ft_get_env(env);
-	pipex->path_cmd1 = get_path_command(pipex->cmd1[0], pipex->path_env);
-	pipex->path_cmd2 = get_path_command(pipex->cmd2[0], pipex->path_env);
+	if (access(pipex->cmd1[0], F_OK) == -1)
+		pipex->path_cmd1 = get_path_command(pipex->cmd1[0], pipex->path_env);
+	else
+		pipex->path_cmd1 = ft_strdup(pipex->cmd1[0]);
+	if (access(pipex->cmd2[0], F_OK) == -1)
+		pipex->path_cmd2 = get_path_command(pipex->cmd2[0], pipex->path_env);
+	else
+		pipex->path_cmd2 = ft_strdup(pipex->cmd2[0]);
+	pipex->error_file = 0;
 }

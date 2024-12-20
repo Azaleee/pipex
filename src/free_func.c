@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 06:52:00 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/12 17:13:07 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/13 14:34:12 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	free_all(t_pipex *pipex)
 		close(pipex->fd_out);
 	free_split(pipex->cmd1);
 	free_split(pipex->cmd2);
-	free(pipex->path_env);
 	free(pipex->path_cmd1);
 	free(pipex->path_cmd2);
 	free(pipex);

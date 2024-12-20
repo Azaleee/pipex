@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 17:56:53 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/12 14:38:15 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/13 14:34:08 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,8 +138,6 @@ static int	count_words(char const *str, char c)
 	return (result);
 }
 
-// Salut je suis 'l_et je suis'
-
 static int	word_lenght(const char *s, char c)
 {
 	int	i;
@@ -218,7 +216,7 @@ char	**ft_split(char const *s, char c)
 // 		i++;
 // 	}
 // 	free(result);
-// 	//printf("%d", word_lenght("'salut' je suis 'matias et je' salut 'la tu est la'", ' '));
+//
 // }
 
 // int	main(void)

@@ -1,7 +1,0 @@
-{
-	"files.associations": {
-		"bitset": "c",
-		"atomic": "c",
-		"pipex.h": "c"
-	}
-}

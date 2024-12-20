@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 22:40:13 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/09 13:42:56 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/15 15:07:34 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@
 
 # include "../libft/libft.h"
 
-# define CMD_ERROR -1
-
 typedef struct s_pipex
 {
 	int			fd_in;
@@ -33,9 +31,10 @@ typedef struct s_pipex
 	char		*path_env;
 	char		*path_cmd1;
 	char		*path_cmd2;
+	int			error_file;
 }				t_pipex;
 
-void	print_usage(void);
+void	print_usage(char **av);
 int		open_file(char *file, int mode);
 void	parsing_args(t_pipex *pipex, char **av, char **env);
 
