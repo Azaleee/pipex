@@ -63,19 +63,21 @@ all: $(NAME)
 
 $(NAME): $(OBJ) $(OBJ_BONUS)
 	@$(AR) $(NAME) $(OBJ)
-	@echo "$(GREEN)Bibliothèque $(NAME) créée.$(RESET)"
+	@echo "========================================"
+	@echo "$(GREEN)Library $(NAME) created.$(RESET)"
+	@echo "========================================"
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
-	@echo "$(BLUE)Compilation de $<$(RESET)"
+	@echo "$(YELLOW)-> Compilation of \"$<\"$(RESET)"
 
 clean:
 	@$(RM) $(OBJ) $(OBJ_BONUS)
-	@echo "$(YELLOW)Fichiers objets supprimés.$(RESET)"
+	@echo "$(RED)Deleted object files for $(NAME).$(RESET)"
 
 fclean: clean
 	@$(RM) $(NAME)
-	@echo  "$(RED)Bibliothèque $(NAME) supprimée.$(RESET)"
+	@echo "$(RED)Library $(NAME) removed.$(RESET)"
 
 bonus: $(OBJ) $(OBJ_BONUS)
 	$(AR) $(NAME) $(OBJ) $(OBJ_BONUS)

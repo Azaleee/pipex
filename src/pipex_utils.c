@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/05 00:13:47 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/20 15:57:35 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/23 17:47:15 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	*ft_get_env(char **env)
 	return (env[i] + 5 + 1);
 }
 
-char	*get_path_command(char *cmd, char *path)
+char	*get_path_cmd(char *cmd, char *path)
 {
 	int		i;
 	char	**split_path;
@@ -79,23 +79,28 @@ char	*get_path_command(char *cmd, char *path)
 void	parsing_args(t_pipex *pipex, char **av, char **env)
 {
 	pipex->fd_in = open_file(av[1], 0);
-	printf("%d", pipex->fd_in);
 	pipex->fd_out = open_file(av[4], 1);
 	pipex->cmd1 = ft_split(av[2], ' ');
 	pipex->cmd2 = ft_split(av[3], ' ');
-	if (!env || !*env)
-	{
-		write(STDERR_FILENO, "environment is empty\n", 22);
-		exit(1);
-	}
 	pipex->path_env = ft_get_env(env);
-	if (access(pipex->cmd1[0], F_OK) == -1)
-		pipex->path_cmd1 = get_path_command(pipex->cmd1[0], pipex->path_env);
+	if (pipex->cmd1[0] != NULL)
+	{
+		if (access(pipex->cmd1[0], F_OK) == -1)
+			pipex->path_cmd1 = get_path_cmd(pipex->cmd1[0], pipex->path_env);
+		else
+			pipex->path_cmd1 = ft_strdup(pipex->cmd1[0]);
+	}
 	else
-		pipex->path_cmd1 = ft_strdup(pipex->cmd1[0]);
-	if (access(pipex->cmd2[0], F_OK) == -1)
-		pipex->path_cmd2 = get_path_command(pipex->cmd2[0], pipex->path_env);
+		pipex->path_cmd1 = NULL;
+	if (pipex->cmd2[0] != NULL)
+	{
+		if (access(pipex->cmd2[0], F_OK) == -1)
+			pipex->path_cmd2 = get_path_cmd(pipex->cmd2[0], pipex->path_env);
+		else
+			pipex->path_cmd2 = ft_strdup(pipex->cmd2[0]);
+	}
 	else
-		pipex->path_cmd2 = ft_strdup(pipex->cmd2[0]);
+		pipex->path_cmd2 = NULL;
 	pipex->error_file = 0;
+	pipex->exit_code = 0;
 }

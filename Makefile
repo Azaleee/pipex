@@ -2,55 +2,50 @@ NAME = pipex
 NAME_BONUS = pipex_bonus
 
 CC = /bin/cc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror
+
+GREEN = \\033[0;32m
+YELLOW = \\033[0;33m
+RED = \\033[0;31m
+BLUE = \\033[0;34m
+RESET = \\033[0m
 
 INCLUDES = includes/
 LIBFT_DIR = libft
 SRC_DIR = src/
-BONUS_DIR = src/bonus/
 OBJ_DIR = obj/
-OBJ_BONUS_DIR = obj_bonus/
 
 SRC_FILES = pipex.c pipex_utils.c free_func.c error_check.c
-SRC_BONUS_FILES = pipex_bonus.c pipex_utils_bonus.c free_func_bonus.c error_check_bonus.c parsing_bonus.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
-OBJ_BONUS_FILES = $(SRC_BONUS_FILES:.c=.o)
 
 SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
 OBJ = $(addprefix $(OBJ_DIR), $(OBJ_FILES))
-
-SRC_BONUS = $(addprefix $(BONUS_DIR), $(SRC_BONUS_FILES))
-OBJ_BONUS = $(addprefix $(OBJ_BONUS_DIR), $(OBJ_BONUS_FILES))
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
 all: $(LIBFT) $(NAME)
 
 $(LIBFT):
-	$(MAKE) -C $(LIBFT_DIR)
+	@$(MAKE) --no-print-directory -C $(LIBFT_DIR)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
-
-bonus: $(LIBFT) $(NAME_BONUS)
-
-$(NAME_BONUS): $(OBJ_BONUS)
-	$(CC) $(CFLAGS) $(OBJ_BONUS) $(LIBFT) -o $(NAME_BONUS)
+	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+	@echo "========================================"
+	@echo "$(GREEN)$(NAME) program created.$(RESET)"
+	@echo "========================================"
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	/bin/mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -I$(INCLUDES) -I $(LIBFT_DIR) -o $@ -c $<
-
-$(OBJ_BONUS_DIR)%.o: $(BONUS_DIR)%.c
-	/bin/mkdir -p $(OBJ_BONUS_DIR)
-	$(CC) $(CFLAGS) -I$(INCLUDES) -I $(LIBFT_DIR) -o $@ -c $<
+	@/bin/mkdir -p $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -I$(INCLUDES) -I $(LIBFT_DIR) -o $@ -c $<
+	@echo "$(YELLOW)-> Compilation of \"$<\"$(RESET)"
 
 clean:
-	/bin/rm -rf $(OBJ_DIR) $(OBJ_BONUS_DIR)
-	$(MAKE) -C $(LIBFT_DIR) clean
+	@/bin/rm -rf $(OBJ_DIR)
+	@$(MAKE) --no-print-directory -C $(LIBFT_DIR) clean
+	@echo "$(RED)Deleted object files for $(NAME).$(RESET)"
 
 fclean: clean
-	/bin/rm -f $(NAME) $(NAME_BONUS)
-	$(MAKE) -C $(LIBFT_DIR) fclean
+	@/bin/rm -f $(NAME)
+	@$(MAKE) --no-print-directory -C $(LIBFT_DIR) fclean
 
 re: fclean all

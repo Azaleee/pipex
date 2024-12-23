@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 22:40:13 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/15 15:07:34 by mosmont          ###   ########.fr       */
+/*   Updated: 2024/12/23 17:47:13 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,10 @@ typedef struct s_pipex
 	char		*path_cmd1;
 	char		*path_cmd2;
 	int			error_file;
+	int			exit_code;
 }				t_pipex;
 
-void	print_usage(char **av);
+void	print_usage(void);
 int		open_file(char *file, int mode);
 void	parsing_args(t_pipex *pipex, char **av, char **env);
 
@@ -42,7 +43,7 @@ void	free_all(t_pipex *pipex);
 void	free_split(char **tab);
 
 char	*ft_get_env(char **env);
-char	*get_path_command(char *cmd, char *path);
+char	*get_path_cmd(char *cmd, char *path);
 
 void	check_error(t_pipex *pipex, char **av);
 
