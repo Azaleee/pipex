@@ -44,6 +44,8 @@ SRC = 				ft_isalnum.c \
 					ft_putendl_fd.c \
 					ft_split.c \
 					ft_putnbr_fd.c \
+					get_next_line_utils.c \
+					get_next_line.c \
 
 OBJ = $(SRC:.c=.o)
 

@@ -5,80 +5,97 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/04 22:39:04 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/23 18:52:51 by mosmont          ###   ########.fr       */
+/*   Created: 2024/12/26 15:15:03 by mosmont           #+#    #+#             */
+/*   Updated: 2025/01/02 14:51:44 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-/*
-	pipe_fd[0] -> Read in file
-	pipe_fd[1] -> Write in file
-*/
-
-void	exec_cmd1(t_pipex *pipex, int pipe_fd[2], char **env)
+void	wait_child(t_pipex *pipex)
 {
-	close(pipe_fd[0]);
-	dup2(pipex->fd_in, STDIN_FILENO);
-	close(pipex->fd_in);
-	dup2(pipe_fd[1], STDOUT_FILENO);
-	close(pipe_fd[1]);
-	execve(pipex->path_cmd1, pipex->cmd1, env);
-}
-
-void	exec_cmd2(t_pipex *pipex, int pipe_fd[2], char **env)
-{
-	close(pipe_fd[1]);
-	dup2(pipe_fd[0], STDIN_FILENO);
-	close(pipe_fd[0]);
-	dup2(pipex->fd_out, STDOUT_FILENO);
-	close(pipex->fd_out);
-	execve(pipex->path_cmd2, pipex->cmd2, env);
-}
-
-void	wait_childs(t_pipex *pipex, pid_t pid, pid_t pid2)
-{
+	int	i;
 	int	status;
 
-	if (pipex->path_cmd1 != NULL && pipex->fd_in != -1)
-		waitpid(pid, &status, 0);
-	if (pipex->path_cmd2 != NULL && pipex->fd_out != -1)
-		waitpid(pid2, &status, 0);
-	if (pipex->exit_code == 1)
+	i = 0;
+	while (i < pipex->nb_cmds)
 	{
-		free_all(pipex);
-		exit(1);
+		if (pipex->pid[i] > 0)
+			waitpid(pipex->pid[i], &status, 0);
+		if (WIFEXITED(status))
+			pipex->exit_code = WEXITSTATUS(status);
+		i++;
 	}
-	else if (pipex->exit_code == 127)
-		;
-	else
-		pipex->exit_code = (status >> 8) & 0xFF;
 }
 
-void	exec_all(t_pipex *pipex, char **env)
+void	handle_files(t_pipex *pipex, int i)
 {
-	pid_t	pid;
-	pid_t	pid2;
-	int		pipe_fd[2];
+	if (i == 0)
+	{
+		if (pipex->is_heredoc == 0)
+			pipex->fd_in = open_file(pipex, pipex->name_in, 0);
+		dup2(pipex->fd_in, STDIN_FILENO);
+		dup2(pipex->pipes[i][1], STDOUT_FILENO);
+		close(pipex->fd_in);
+	}
+	else if (i == pipex->nb_cmds - 1)
+	{
+		pipex->fd_out = open_file(pipex, pipex->name_out, 1);
+		dup2(pipex->pipes[i - 1][0], STDIN_FILENO);
+		dup2(pipex->fd_out, STDOUT_FILENO);
+		close(pipex->fd_out);
+	}
+}
 
-	pipe(pipe_fd);
-	if (pipex->path_cmd1 != NULL && pipex->fd_in != -1)
+void	execute_cmd(t_pipex *pipex, int i)
+{
+	int	j;
+
+	if (i == 0 || i == pipex->nb_cmds - 1)
+		handle_files(pipex, i);
+	else
 	{
-		pid = fork();
-		if (pid == 0)
-			exec_cmd1(pipex, pipe_fd, env);
+		dup2(pipex->pipes[i - 1][0], STDIN_FILENO);
+		dup2(pipex->pipes[i][1], STDOUT_FILENO);
 	}
-	if (pipex->path_cmd2 != NULL && pipex->fd_out != -1)
+	j = 0;
+	while (j < pipex->nb_cmds - 1)
 	{
-		pid2 = fork();
-		if (pid2 == 0)
-			exec_cmd2(pipex, pipe_fd, env);
+		if (j != i - 1)
+			close(pipex->pipes[j][0]);
+		if (j != i)
+			close(pipex->pipes[j][1]);
+		j++;
 	}
-	close(pipe_fd[0]);
-	close(pipe_fd[1]);
-	if (pipex->path_cmd2 != NULL || pipex->path_cmd1 != NULL)
-		wait_childs(pipex, pid, pid2);
+	parse_and_check_cmd(pipex, i);
+	execve(pipex->path_cmd, pipex->cmd, pipex->env);
+}
+
+void	execute_all(t_pipex *pipex)
+{
+	int	i;
+
+	i = -1;
+	while (++i < pipex->nb_cmds)
+	{
+		pipex->pid[i] = fork();
+		if (pipex->pid[i] == -1)
+		{
+			perror("fork fail");
+			free_all(pipex);
+			exit(1);
+		}
+		if (pipex->pid[i] == 0)
+			execute_cmd(pipex, i);
+	}
+	i = 0;
+	while (i < pipex->nb_cmds - 1)
+	{
+		close(pipex->pipes[i][0]);
+		close(pipex->pipes[i][1]);
+		i++;
+	}
+	wait_child(pipex);
 }
 
 int	main(int ac, char **av, char **env)
@@ -86,18 +103,24 @@ int	main(int ac, char **av, char **env)
 	t_pipex	*pipex;
 	int		exit_code;
 
-	if (ac != 5)
+	if (ac < 5)
 		print_usage();
 	else
 	{
 		pipex = malloc(sizeof(t_pipex));
-		if (pipex == NULL)
-			return (0);
-		parsing_args(pipex, av, env);
-		check_error(pipex, av);
-		exec_all(pipex, env);
+		if (strcmp(av[1], "here_doc") == 0 && ac >= 6)
+		{
+			pipex->is_heredoc = 1;
+			pipex->eof = av[2];
+		}
+		else
+			pipex->is_heredoc = 0;
+		init_struct(pipex, ac, av, env);
+		init_pipes(pipex);
+		execute_all(pipex);
 		exit_code = pipex->exit_code;
 		free_all(pipex);
+		unlink(".heredoc_temp");
 		exit(exit_code);
 	}
 	return (0);

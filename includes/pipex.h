@@ -6,7 +6,7 @@
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 22:40:13 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/23 17:47:13 by mosmont          ###   ########.fr       */
+/*   Updated: 2025/01/02 15:18:19 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,25 +26,35 @@ typedef struct s_pipex
 {
 	int			fd_in;
 	int			fd_out;
-	char		**cmd1;
-	char		**cmd2;
-	char		*path_env;
-	char		*path_cmd1;
-	char		*path_cmd2;
-	int			error_file;
+	int			nb_cmds;
 	int			exit_code;
+	int			is_heredoc;
+	pid_t		*pid;
+	int			**pipes;
+	char		*eof;
+	char		*name_in;
+	char		*name_out;
+	char		*path;
+	char		**cmds;
+	char		**cmd;
+	char		*path_cmd;
+	char		**env;
 }				t_pipex;
 
-void	print_usage(void);
-int		open_file(char *file, int mode);
-void	parsing_args(t_pipex *pipex, char **av, char **env);
-
-void	free_all(t_pipex *pipex);
-void	free_split(char **tab);
-
 char	*ft_get_env(char **env);
+int		open_file(t_pipex *pipex, char *file, int mode);
 char	*get_path_cmd(char *cmd, char *path);
 
-void	check_error(t_pipex *pipex, char **av);
+void	init_pipes(t_pipex *pipex);
+void	init_struct(t_pipex *pipex, int ac, char **av, char **env);
+
+void	print_usage(void);
+void	check_file(t_pipex *pipex, int mode);
+void	parse_and_check_cmd(t_pipex *pipex, int i);
+
+void	free_split(char **tab);
+void	free_all(t_pipex *pipex);
+
+int		open_heredoc(t_pipex *pipex);
 
 #endif

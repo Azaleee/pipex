@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_func.c                                        :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mosmont <mosmont@student.42lehavre.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/09 06:52:00 by mosmont           #+#    #+#             */
-/*   Updated: 2024/12/23 17:27:35 by mosmont          ###   ########.fr       */
+/*   Created: 2024/12/26 16:41:15 by mosmont           #+#    #+#             */
+/*   Updated: 2024/12/29 01:21:44 by mosmont          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	free_split(char **tab)
 	int	i;
 
 	i = 0;
-	if (tab[0] == NULL)
-		free(tab);
+	if (tab == NULL)
+		return ;
 	else
 	{
 		while (tab[i] != NULL)
@@ -27,18 +27,44 @@ void	free_split(char **tab)
 			i++;
 		}
 		free(tab);
+		tab = NULL;
+	}
+}
+
+void	free_pipes(t_pipex *pipex, int **tab)
+{
+	int	i;
+
+	i = 0;
+	if (tab == NULL)
+		return ;
+	else
+	{
+		while (i < pipex->nb_cmds - 1)
+		{
+			if (tab[i])
+				free(tab[i]);
+			i++;
+		}
+		free(tab);
+		tab = NULL;
 	}
 }
 
 void	free_all(t_pipex *pipex)
 {
-	if (pipex->fd_in >= 0)
+	if (pipex->fd_in != -1)
 		close(pipex->fd_in);
-	if (pipex->fd_out >= 0)
+	if (pipex->fd_out != -1)
 		close(pipex->fd_out);
-	free_split(pipex->cmd1);
-	free_split(pipex->cmd2);
-	free(pipex->path_cmd1);
-	free(pipex->path_cmd2);
-	free(pipex);
+	if (pipex->cmd != NULL)
+		free_split(pipex->cmd);
+	if (pipex->path_cmd != NULL)
+		free(pipex->path_cmd);
+	if (pipex->pipes)
+		free_pipes(pipex, pipex->pipes);
+	if (pipex->pid)
+		free(pipex->pid);
+	if (pipex)
+		free(pipex);
 }

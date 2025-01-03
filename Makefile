@@ -15,7 +15,7 @@ LIBFT_DIR = libft
 SRC_DIR = src/
 OBJ_DIR = obj/
 
-SRC_FILES = pipex.c pipex_utils.c free_func.c error_check.c
+SRC_FILES = pipex.c init.c pipex_utils.c check_error.c free.c heredoc.c
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 SRC = $(addprefix $(SRC_DIR), $(SRC_FILES))
